@@ -1,4 +1,4 @@
-interface AudioDestinationNode {
+interface AudioDestinationNode extends AudioNode {
 
 }
 
@@ -15,7 +15,13 @@ interface EventHandler {
 }
 
 interface AudioBuffer {
-
+    sampleRate: number;
+    length: number;
+    duration: number;
+    numberOfChannels: number;
+    getChannelData (channel: number): Float32Array;
+    copyFromChannel (destination: Float32Array, channelNumber: number, startInChannel = 0): void;
+    copyToChannel (source: Float32Array, channelNumber: number, startInChannel = 0): void;
 }
 
 interface DecodeSuccessCallback {
@@ -26,15 +32,15 @@ interface DecodeErrorCallback {
     (error: DOMException)
 }
 
-interface AudioBufferSourceNode {
+interface AudioBufferSourceNode extends AudioNode {
 
 }
 
-interface MediaElementAudioSourceNode {
+interface MediaElementAudioSourceNode extends AudioNode {
 
 }
 
-interface MediaStreamAudioSourceNode {
+interface MediaStreamAudioSourceNode extends AudioNode {
 
 }
 
@@ -42,7 +48,7 @@ interface MediaStream {
 
 }
 
-interface MediaStreamAudioDestinationNode {
+interface MediaStreamAudioDestinationNode extends AudioNode {
 
 }
 
@@ -50,64 +56,100 @@ interface DOMString extends String {
 
 }
 
-interface AudioWorkerNode {
+interface AudioWorkerNode extends AudioNode {
 
 }
 
-interface ScriptProcessorNode {
+interface ScriptProcessorNode extends AudioNode {
 
 }
 
-interface AnalyserNode {
+interface AnalyserNode extends AudioNode {
 
 }
 
-interface GainNode {
+interface GainNode extends AudioNode {
+    gain: AudioParam;
+}
+
+// single input, single output
+interface DelayNode extends AudioNode {
+    delayTime: AudioParam;
+}
+
+interface BiquadFilterNode extends AudioNode {
 
 }
 
-interface DelayNode {
+interface WaveShaperNode extends AudioNode {
 
 }
 
-interface BiquadFilterNode {
+interface PannerNode extends AudioNode {
 
 }
 
-interface WaveShaperNode {
+interface StereoPannerNode extends AudioNode {
 
 }
 
-interface PannerNode {
+interface ConvolverNode extends AudioNode {
 
 }
 
-interface StereoPannerNode {
+interface ChannelSplitterNode extends AudioNode {
 
 }
 
-interface ConvolverNode {
+interface ChannelMergerNode extends AudioNode {
 
 }
 
-interface ChannelSplitterNode {
+interface DynamicsCompressorNode extends AudioNode {
 
 }
 
-interface ChannelMergerNode {
+type OscillatorType = "sine" | "square" | "sawtooth" | "triangle" | "custom";
 
-}
-
-interface DynamicsCompressorNode {
-
-}
-
-interface OscillatorNode {
-
+interface OscillatorNode extends AudioNode {
+    type: OscillatorType;
+    frequency: AudioParam;
+    detune: AudioParam;
+    start (when = 0): void;
+    stop (when = 0): void;
+    setPeriodicWave (periodicWave: PeriodicWave): void;
+    onended: EventHandler;
 }
 
 interface PeriodicWave {
+}
 
+interface AudioParam {
+    value: number;
+    defaultValue: number;
+    setValueAtTime (value: number, startTime: number): void; 
+    linearRampToValueAtTime (value: number, endTime: number): void; 
+    exponentialRampToValueAtTime (value: number, endTime: number): void; 
+    setTargetAtTime (target: number, startTime: number, timeConstant: number): void; 
+    setValueCurveAtTime (values: Float32Array, startTime: number, duration: number): void; 
+    cancelScheduledValues (startTime: number): void; 
+}
+
+type ChannelCountMode = "max" | "clamped-max" | "explicit";
+
+type ChannelInterpretation = "speakers" | "discrete";
+
+
+interface AudioNode extends EventTarget {
+    connect(destination: AudioNode, output = 0, input = 0): void;
+    connect(destination: AudioParam, output = 0): void;
+    disconnect(output = 0): void;
+    context: AudioContext;
+    numberOfInputs: number;
+    numberOfOutputs: number;
+    channelCount: number;
+    channelCountMode: ChannelCountMode;
+    channelInterpretation: ChannelInterpretation;
 }
 
 
